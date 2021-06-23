@@ -21,7 +21,6 @@ pipe.multitarget_neural_network_regressor = (@load MultitargetNeuralNetworkRegre
 evaluate!(mach_pipe; measure=smape,
           resampling=Holdout(; fraction_train=0.75))
 
-
 # Few Nativly implemented models
 models()
 models(x -> x.is_pure_julia)

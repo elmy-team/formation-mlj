@@ -1,4 +1,4 @@
-using MLJ, CSV, DataFrames
+using MLJ, CSV, DataFrames, MLJBase
 
 # Load the train set
 path = joinpath(ENV["VOLTAIRE"], "data", "datasets", "SILFIAC")
