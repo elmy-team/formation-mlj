@@ -25,8 +25,8 @@ workers = addprocs(n_cpus, exeflags="--project=.")
     Standardizer(),                 
     PCA(pratio=0.95),
     model,
-    target=x->log.(x.+1),
-    inverse=x->exp.(x).-1,
+    target=x->log.(x),
+    inverse=x->exp.(x),
     name = "my_pipeline")
 
 @everywhere using Random

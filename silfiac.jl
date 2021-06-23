@@ -11,8 +11,8 @@ X = data[:, Not(vcat(Symbol.(labels), :date_col))]
 y = data[:, labels] |> eachrow .|> mean
 
 # Pick and load a model
-Model = @load EpsilonSVR pkg=LIBSVM
-model = Model(tolerance=1.0)
+Mdl = @load EpsilonSVR pkg=LIBSVM
+model = Mdl(tolerance=1.0)
 
 # Create a first machine
 mach = machine(model, X, y)
@@ -30,7 +30,6 @@ models(matching(X, y))
 
 # Evaluate the forecasting model
 # Pick a metric
-using PyPlot
 plot(y)
 hist(y)
 
