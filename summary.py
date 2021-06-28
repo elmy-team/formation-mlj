@@ -46,8 +46,9 @@ pipe = make_pipeline(
 
 regr = TransformedTargetRegressor(
     regressor=pipe,
-    func = lambda x: np.log(x+1),
-    inverse_func = lambda x: np.exp(x)-1)
+    func = lambda x: np.log(x),
+    inverse_func = lambda x: np.exp(x))
+
 regr.fit(X, y)
 regr.predict(X)
 

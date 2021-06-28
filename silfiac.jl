@@ -2,7 +2,7 @@ using CSV, DataFrames, Statistics, Dates
 using MLJ, MLJBase, PyPlot
 
 # Load the train set
-path = joinpath(ENV["VOLTAIRE"], "data", "datasets", "SILFIAC")
+path = joinpath(pwd(), "data")
 data = CSV.read(joinpath(path, "train.csv"), DataFrame)
 
 # Separate data from labels
@@ -12,15 +12,16 @@ y = data[:, labels] |> eachrow .|> mean
 
 # Pick and load a model
 Mdl = @load EpsilonSVR pkg=LIBSVM
-model = Mdl(tolerance=1.0)
+model = Mdl(tolerance=0.1)
 
 # Create a first machine
 mach = machine(model, X, y)
 fit!(mach)
 predict(mach, X)
 
-MLJ.save("machine_example.jlso", mach)
-machine("machine_example.jlso", X, y)
+mpath = joinpath("machines", "machine_example.jlso")
+MLJ.save(mpath, mach)
+machine(mpath, X, y)
 
 # Inspect the machine
 fitted_params(mach)
@@ -42,7 +43,8 @@ MLJ.mae(y, predict(mach, X))
 
 # evaluation loop
 fraction_train = 1 - mean(year.(data.date_col) .== 2019)
-evaluate!(mach; measure=[smape, MLJ.mae],
+evaluate!(mach;
+          measure=[smape, MLJ.mae],
           resampling=Holdout(; fraction_train=fraction_train))
 
 # Let's increase performances!
@@ -51,7 +53,15 @@ scaler = Standardizer()
 mach_std = machine(scaler, X)
 fit!(mach_std)
 MLJ.transform(mach_std, X)
-           
+
+mach_std = machine(scaler, X)
+fit!(mach_std)
+Xt = MLJ.transform(mach_std, X)
+
+mach = machine(model, Xt, y)
+fit!(mach)
+predict(Xt)
+
 pipe = @pipeline Standardizer() model
 mach_pipe = machine(pipe, X, y)
 fit!(mach_pipe)
@@ -79,8 +89,9 @@ mach_fs = machine(fs, X)
 fit!(mach_fs)
 MLJ.transform(mach_fs, X)
 
-pipe = @pipeline(FeatureSelector(features = name -> occursin("48.2_-3.1", string(name)),
-                                 ignore=true),
+pipe = @pipeline(FeatureSelector(
+    features = name -> occursin("48.2_-3.1", string(name)),
+    ignore=true),
                  Standardizer(),                 
                  PCA(pratio=0.95),
                  model,
@@ -111,12 +122,13 @@ r1 = (:(epsilon_svr.cost), LogUniform(10e-9, 10e9))
 r2 = (:(epsilon_svr.gamma), LogUniform(10e-9, 10e9))
 
 tuned_model = TunedModel(model = pipe,
+                         
                          resampling = Holdout(; fraction_train=fraction_train),
-                         measure = smape,                         
+                         measure = smape,
+                         
                          tuning = RandomSearch(),
                          range = [r1, r2],
                          n = 10)
-
 mach_tuned_model = machine(tuned_model, X, y)
 fit!(mach_tuned_model)
 
@@ -190,6 +202,7 @@ tuned_model = TunedModel(model = pipe,
                          measure = smape,
                          n = 10,
                          acceleration = CPUProcesses())
+
 mach_tuned_model = machine(tuned_model, X, y)
 fit!(mach_tuned_model)
 mach_tuned_model.report.best_model
