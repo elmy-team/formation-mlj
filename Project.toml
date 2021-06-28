@@ -1,4 +1,7 @@
 [deps]
+CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
+DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
 MLJ = "add582a8-e3ab-11e8-2d5e-e98b27df1bc7"
 MLJBase = "a7f614a8-145f-11e9-1d2a-a57a1082229d"
 MLJLIBSVMInterface = "61c7150f-6c77-4bb1-949c-13197eac2a52"
@@ -7,3 +10,4 @@ MLJScikitLearnInterface = "5ae90465-5518-4432-b9d2-8a1def2f0cab"
 MultivariateStats = "6f286f6a-111f-5878-ab1e-185364afe411"
 PyPlot = "d330b81b-6aea-500a-939a-2ce795aea3ee"
 ScikitLearn = "3646fa90-6ef7-5e7e-9f22-8aca16db6324"
+Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
